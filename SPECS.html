@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+    <style>
+        .nav {
+            height: 100%;
+            width: 144px;
+            position: fixed;
+            z-index: 1;
+            white-space: pre-line;
+            font-size: 24px;
+            top: 0;
+            left: 0;
+            overflow-x: hidden;
+            background: linear-gradient(180deg, rgba(84,84,224,1) 40%, rgba(95,215,240,1) 75%);
+        }
+        .main {
+            margin-left: 128px;
+            padding: 0px 10px;
+        }
+    </style>
+    <div class="nav">
+        <a href="INDEX.html" style="color:white">
+            About
+        </a>
+        <a href="DLS.html" style="color:white">
+            Downloads
+        </a>
+        <a href="SPECS.html" style="color:white">
+            Specifications
+        </a>
+        <a href="INS.html" style="color:white">
+            Instructions
+        </a>
+    </div>
+    <div class="main">
+        <head>
+            <img src="LOGO.png" height="128" width="128">
+            <br>
+        </head>
+        <body>
+            <b style="font-size: 24px; color: rgba(84,84,224,1)">
+                Specifications
+                <br><br>
+            </b>
+            <b>
+                1.Memory
+                <br>
+            </b>
+            <a>
+                QWEN virtual machine had 64KB (65,536 bytes) of RAM. The lowermost 34.816KB are reserved to store font data (4,096 bytes), and video memory (30,720 bytes).
+                <br> 
+                QWEN programs start at location 0x8800.
+                <br>
+                Memory Map:
+                <br>
+                0x0000 - 0x87FF: Font data and video RAM 
+                <br>
+                0x8800 - 0xFFFF: Work RAM
+                <br>
+            </a>
+            <b>
+                2.Register
+                <br>
+            </b>
+            <a>
+                QWEN has 16 general purpose 8-bit registers named R0 to RF. RF is the carry flag. QWEN also has a 16-bit registers called RI.
+                <br>
+                This register is used to store memory addresses. There is also the stack pointer (SP) which is used to store return addresses when 
+                <br>
+                subroutines are called. It has the 16-bit program counter (PC) too.
+                <br>
+                <br>
+            </a>
+            <b>
+                3.The stack
+                <br>
+            </b>
+            <a>
+                The stack is an array of 64 16-bit values, used to store return address when subroutines are called. The stack pointer (SP) is 16-bit, it
+                <br>
+                is used to point to the topmost level of the stack.
+                <br>
+                <br>
+            </a>
+            <b>
+                4.Input
+                <br>
+            </b>
+            <a>
+                Input with keyboard that has A-Z (Non-case-sensitive), 0-9, +, -, * and /.
+                <br>
+                <br>
+            </a>
+            <b>
+                5.Graphics
+                <br>
+            </b>
+            <a>
+                QWEN Display resolution is 256x240 pixels. Its color is 4-bit.
+                <br>
+                Coordinate system of a screen:
+                <br>
+                <img src="COORD.png" height="256" width="240">
+                <br>
+                The pixels are bytepacked. Each pixel will contain 4 bit of data. For example, the bit 0b0000 is a single-pixel with a white color.
+                <br>
+                QWEN can draw graphics on screen with sprites too. A sprite is a group of byte which represent a picture. QWEN sprites can be up to 128 bytes, for
+                <br>
+                a posible sprite size of 16x16 pixels.
+                <br>
+                <br>
+            </a>
+            <b>
+                6.Sound
+                <br>
+            </b>
+            <a>
+                Sound will be played with an instruction. QWEN supports the notes of the scale C, D, E, F, G, A, B and C (higher).
+            </a>
+        </body>
+    </div>
+</html>

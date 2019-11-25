@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html>
+    <style>
+        .nav {
+            height: 100%;
+            width: 144px;
+            position: fixed;
+            z-index: 1;
+            white-space: pre-line;
+            font-size: 24px;
+            top: 0;
+            left: 0;
+            overflow-x: hidden;
+            background: linear-gradient(180deg, rgba(84,84,224,1) 40%, rgba(95,215,240,1) 75%);
+        }
+        .main {
+            margin-left: 128px;
+            padding: 0px 10px;
+        }
+        table, th, td{
+            border: 1px solid black;
+            border-collapse: collapse;
+        }
+    </style>
+    <div class="nav">
+        <a href="INDEX.html" style="color:white">
+            About
+        </a>
+        <a href="DLS.html" style=color:white>
+            Downloads
+        </a>
+        <a href="SPECS.html" style="color:white">
+            Specifications
+        </a>
+        <a href="INS.html" style="color:white">
+            Instructions
+        </a>
+    </div>
+    <div class="main">
+        <head>
+            <img src="LOGO.png" height="128" width="128">
+            <br>
+        </head>
+        <body>
+            <b style="font-size: 24px; color: rgba(84,84,224,1)">
+                QWEN Instructions
+                <br><br>
+            </b>
+            <a>
+                Qwen has 26 instructions. Instructions are all two bytes long and stored big-endian. The instructions are listed below, in hexadecimal.
+                <br>
+                Symbols:
+                <br>
+                -NNNN: Address
+                <br>
+                -NN: 8-bit constant
+                <br>
+                -N: 4-bit constant
+                <br>
+                -X and Y: 4-bit register identifier
+                <br>
+                -PC: Program Counter
+                <br>
+                -I: 16-bit register
+                <br>
+                -RN: One of the 16 variables. N can be 0 to F (Hexadecimal)
+                <br>
+                <table>
+                    <tr>
+                        <th>
+                            Opcode
+                        </th>
+                        <th>
+                            Type
+                        </th>
+                        <th>
+                            C Pseudo
+                        </th>
+                        <th>
+                            Explanation
+                        </th>
+                    </tr>
+                    <tr>
+                        <th>
+                            0x0000
+                        </th>
+                        <th>
+                            Display
+                        </th>
+                        <th>
+                            clear();
+                        </th>
+                        <th>
+                            Clears the display.
+                        </th>
+                    </tr>
+                    <tr>
+                        <th>
+                            0x0001
+                        </th>
+                        <th>
+                            Flow
+                        </th>
+                        <th>
+                            return;
+                        </th>
+                        <th>
+                            Returns from a subroutine. Sets the PC to address at the top of the stack, then subtracts 1 from the stack pointer (SP).
+                        </th>
+                    </tr>
+                    <tr>
+                        <th>
+                            0x0002
+                        </th>
+                        <th>
+                            Flow
+                        </th>
+                        <th>
+                            goto NNNN;
+                        </th>
+                        <th>
+                            Jumps to address NNNN(High byte from R0 register and low byte from R1 register). Sets the PC to NNNN.
+                        </th>
+                    </tr>
+                    <tr>
+                        <th>
+                            0x0003
+                        </th>
+                        <th>
+                            Flow
+                        </th>
+                        <th>
+                            *(0xNNNN)();
+                        </th>
+                        <th>
+                            Calls subroutine at NNNN(High byte from R0 register and low byte from R1 register). Increments the stack pointer, then puts
+                            <br>
+                            the current PC on the top of the stack. The PC is then set to NNNN.
+                        </th>
+                    </tr>
+                    <tr>
+                        <th>
+                            0x1XNN
+                        </th>
+                        <th>
+                            Assign
+                        </th>
+                        <th>
+                            RX = NN;
+                        </th>
+                        <th>
+                            Sets RX to NN.
+                        </th>
+                    </tr>
+                    <tr>
+                        <th>
+                            0x2XY0
+                        </th>
+                        <th>
+                            Assign
+                        </th>
+                        <th>
+                            RX = RY;
+                        </th>
+                        <th>
+                            Sets RX to the value of RY.
+                        </th>
+                    </tr>
+                    <tr>
+                        <th>
+                            0x2NN1
+                        </th>
+                        <th>
+                            Assign
+                        </th>
+                        <th>
+                            *((R0<<8) | (R1)) = NN;
+                        </th>
+                        <th>
+                            Set (R0<<8) | R1 memory location to NN.
+                        </th>
+                    </tr>
+                    <tr>
+                        <th>
+                            0x31XY
+                        </th>
+                        <th>
+                            Bitwise Operation
+                        </th>
+                        <th>
+                            RX = RX | RY;
+                        </th>
+                        <th>
+                            Sets RX to RX or RY (Bitwise OR Operation).
+                        </th>
+                    </tr>
+                    <tr>
+                        <th>
+                            0x32XY
+                        </th>
+                        <th>
+                            Bitwise Operation
+                        </th>
+                        <th>
+                            RX = RX & RY;
+                        </th>
+                        <th>
+                            Sets RX to RX and RY (Bitwise AND Operation).
+                        </th>
+                    </tr>
+                    <tr>
+                        <th>
+                            0x33XY
+                        </th>
+                        <th>
+                            Bitwise Operation
+                        </th>
+                        <th>
+                            RX = RX ^ RY;
+                        </th>
+                        <th>
+                            Sets RX to RX xor RY (Bitwise XOR Operation).
+                        </th>
+                    </tr>
+                    <tr>
+                        <th>
+                            0x34X1
+                        </th>
+                        <th>
+                            Bitwise Operation
+                        </th>
+                        <th>
+                            RX >>= 1;
+                        </th>
+                        <th>
+                            Stores the least significant bit of RX in RF and then shifts RX to the right by 1.
+                        </th>
+                    </tr>
+                    <tr>
+                        <th>
+                            0x34X2
+                        </th>
+                        <th>
+                            Bitwise Operation
+                        </th>
+                        <th>
+                            RX <<= 1;
+                        </th>
+                        <th>
+                            Stores the most significant bit of RX in RY and then shifts RX to the left by 1.
+                        </th>
+                    </tr>
+                    <tr>
+                        <th>
+                            0x4XNN
+                        </th>
+                        <th>
+                            Math Operation
+                        </th>
+                        <th>
+                            RX += NN;
+                        </th>
+                        <th>
+                            Adds NN to RX (Carry flag is not changed).
+                        </th>
+                    </tr>
+                    <tr>
+                        <th>
+                            0x51XY
+                        </th>
+                        <th>
+                            Math Operation
+                        </th>
+                        <th>
+                            RX += RY;
+                        </th>
+                        <th>
+                            Adds RY to RX. RF is set to 1 when there's carry, and to 0 when there isn't.
+                        </th>
+                    </tr>
+                    <tr>
+                        <th>
+                            0x52XY
+                        </th>
+                        <th>
+                            Math Operation
+                        </th>
+                        <th>
+                            RX -= RY;
+                        </th>
+                        <th>
+                            RY is subtracted from RX. RF is set to 0 when there's a borrow, and 1 when there isn't.
+                        </th>
+                    </tr>
+                    <tr>
+                        <th>
+                            0x6XNN
+                        </th>
+                        <th>
+                            Condition
+                        </th>
+                        <th>
+                            if (RX==NN);
+                        </th>
+                        <th>
+                            Skip the next instruction if RX equals NN. 
+                        </th>
+                    </tr>
+                    <tr>
+                        <th>
+                            0x7XNN
+                        </th>
+                        <th>
+                            Condition
+                        </th>
+                        <th>
+                            if (RX!=NN);
+                        </th>
+                        <th>
+                            Skip the next instruction if RX doesn't equal NN.
+                        </th>
+                    </tr>
+                    <tr>
+                        <th>
+                            0x8XY0
+                        </th>
+                        <th>
+                            Condition
+                        </th>
+                        <th>
+                            if (RX==RY);
+                        </th>
+                        <th>
+                            Skip the next instruction if RX qeuals RY.
+                        </th>
+                    </tr>
+                    <tr>
+                        <th>
+                            0x9X01
+                        </th>
+                        <th>
+                            Key Operation
+                        </th>
+                        <th>
+                            if (key()==RX);
+                        </th>
+                        <th>
+                            Skip the next instruction if the key stored in RX is pressed .
+                        </th>
+                    </tr>
+                    <tr>
+                        <th>
+                            0xA000
+                        </th>
+                        <th>
+                            Memory
+                        </th>
+                        <th>
+                            RI += NNNN;
+                        </th>
+                        <th>
+                            Adds NNNN(High byte from R0 register and low byte from R1 register) to RI
+                        </th>
+                    </tr>
+                    <tr>
+                        <th>
+                            0xBX00
+                        </th>
+                        <th>
+                            Memory
+                        </th>
+                        <th>
+                            RI = sprite_address[RX];
+                        </th>
+                        <th>
+                            Sets RI to the location of the sprite for the character code in RX. Characters A-Z (Non-case-sensitive), 0-9, +, -, *, /.
+                        </th>
+                    </tr>
+                    <tr>
+                        <th>
+                            0xC00X
+                        </th>
+                        <th>
+                            Random Operation
+                        </th>
+                        <th>
+                            RX = rand();
+                        </th>
+                        <th>
+                            Sets RX to a random number(0-255).
+                        </th>
+                    </tr>
+                    <tr>
+                        <th>
+                            0xDXY0
+                        </th>
+                        <th>
+                            Display
+                        </th>
+                        <th>
+                            Draw(RX,RY);
+                        </th>
+                        <th>
+                            Draw a sprite at coordinate(RX, RY) that has a 8x8 pixels. Each row of 8 pixels is read as 4-bit-coded starting from
+                            <br>
+                            memory location RI.
+                        </th>
+                    </tr>
+                    <tr>
+                        <th>
+                            0xEX00
+                        </th>
+                        <th>
+                            Key Operation
+                        </th>
+                        <th>
+                            RX = get_key();
+                        </th>
+                        <th>
+                            A key press is awaited, and then stored in RX.
+                        </th>
+                    </tr>
+                    <tr>
+                        <th>
+                            0xFNN0
+                        </th>
+                        <th>
+                            Timer
+                        </th>
+                        <th>
+                            delay(NN);
+                        </th>
+                        <th>
+                            Delay NN milliseconds.
+                        </th>
+                    </tr>
+                    <tr>
+                        <th>
+                            0xF0N1
+                        </th>
+                        <th>
+                            Sound
+                        </th>
+                        <th>
+                            play_sound(N);
+                        </th>
+                        <th>
+                            Play sound N(see sound chart) for 0.5 milliseconds.
+                        </th>
+                    </tr>
+                </table>
+            </a>
+        </body>
+    </div>
+</html>
